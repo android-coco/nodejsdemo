@@ -43,4 +43,25 @@ router.get('/addUser', function(req, res, next){
         });
     });
 });
+//查询用户
+router.get('/userlist',function (req,res,next) {
+    pool.getConnection(function (err,connection) {
+        var param = req.query || req.params;
+        connection.query(userSQL.getUserById,[param.id],function (err,result) {
+            if(result.length == 0) {
+                result = {
+                    result : "1",
+                    msg:"暂无数据"
+                };
+
+            }
+            console.log(err,result);
+            // 以json形式，把操作结果返回给前台页面
+            responseJSON(res, result);
+            // 释放连接
+            connection.release();
+        });
+    });
+});
+
 module.exports = router;
