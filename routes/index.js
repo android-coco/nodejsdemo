@@ -47,20 +47,40 @@ router.get('/addUser', function(req, res, next){
 router.get('/userlist',function (req,res,next) {
     pool.getConnection(function (err,connection) {
         var param = req.query || req.params;
-        connection.query(userSQL.getUserById,[param.id],function (err,result) {
-            if(result.length == 0) {
-                result = {
-                    result : "1",
-                    msg:"暂无数据"
-                };
+        var id = param.id;
+        if (id == "all")
+        {
+            connection.query(userSQL.queryAll,[],function (err,result) {
+                if(result.length == 0) {
+                    result = {
+                        result : "1",
+                        msg:"暂无数据"
+                    };
 
-            }
-            console.log(err,result);
-            // 以json形式，把操作结果返回给前台页面
-            responseJSON(res, result);
-            // 释放连接
-            connection.release();
-        });
+                }
+                console.log(err,result);
+                // 以json形式，把操作结果返回给前台页面
+                responseJSON(res, result);
+                // 释放连接
+                connection.release();
+            });
+        }else{
+            connection.query(userSQL.getUserById,[param.id],function (err,result) {
+                if(result.length == 0) {
+                    result = {
+                        result : "1",
+                        msg:"暂无数据"
+                    };
+
+                }
+                console.log(err,result);
+                // 以json形式，把操作结果返回给前台页面
+                responseJSON(res, result);
+                // 释放连接
+                connection.release();
+            });
+        }
+
     });
 });
 
